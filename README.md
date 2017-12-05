@@ -1,1 +1,3 @@
 # Squares
+
+Sometimes you're tired in class. Well, this is a result of some lessons...
