@@ -1,3 +1,3 @@
 # Squares
 
-Sometimes you're tired in class. Well, this is a result of some lessons...
+A simple clone of good old Minesweeper.
