@@ -1,3 +1,3 @@
 # Squares
 
-A simple clone of good old Minesweeper.
+An open source clone of good old Minesweeper.
