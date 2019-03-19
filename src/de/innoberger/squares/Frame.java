@@ -12,41 +12,40 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import de.innoberger.squares.input.Mouse;
 import de.innoberger.squares.square.Square;
 
 public class Frame extends JFrame {
 	private static final long serialVersionUID = 1L;
+	
 	public static final String TITLE = "Squares";
-	public static final String VERSION = "1.0";
-	public static final int xOffset = 50;
-	public static final int yOffset = 50;
-	public static final int xSquares = 25;
-	public static final int ySquares = 15;
-	public static final int WIDTH = 1172;
-	public static final int HEIGHT = 792;
+	public static final String VERSION = "2.0-SNAPSHOT";
+	
+	public static final int OFFSET_BETWEEN = 4;
+	public static final int BOTTOM_OFFSET = 50;
+	public static final int X_SQUARES = 25;
+	public static final int Y_SQUARES = 15;
+	
+	public static final String FONT_FAMILY = "Courier New";
+	
 	public static ArrayList<Square> field;
 	public static ArrayList<Square> safeSquares;
+	
 	public static int revealed;
-	private BufferedImage image;
-	private Mouse mouse;
 	public boolean freeze;
-	private Main main;
+	
+	private BufferedImage image;
+	public static final int WIDTH = (int) (OFFSET_BETWEEN * 2.5) + (Square.SIZE + OFFSET_BETWEEN) * X_SQUARES;
+	public static final int HEIGHT = BOTTOM_OFFSET * 2 + OFFSET_BETWEEN * 2 + (Square.SIZE + OFFSET_BETWEEN) * Y_SQUARES;
 
 	public Frame(Main main) {
-		super("Squares 1.0");
+		super(TITLE + " " + VERSION);
 
-		this.main = main;
 		this.freeze = false;
 		revealed = 0;
 
-		setPreferredSize(new Dimension(1172, 792));
+		setPreferredSize(new Dimension(Frame.WIDTH, Frame.HEIGHT));
 		setDefaultCloseOperation(3);
 		setResizable(false);
-
-		this.mouse = setupMouse();
-
-		addMouseListener(this.mouse);
 
 		this.image = setupImage();
 		draw();
@@ -56,7 +55,7 @@ public class Frame extends JFrame {
 		Graphics gr = this.image.createGraphics();
 
 		gr.setColor(Color.BLACK);
-		gr.fillRect(0, 0, 1172, 792);
+		gr.fillRect(0, 0, Frame.WIDTH, Frame.HEIGHT);
 
 		this.freeze = false;
 		revealed = 0;
@@ -69,11 +68,9 @@ public class Frame extends JFrame {
 	}
 
 	public void refreshGrid() {
-		Graphics gr = this.image.createGraphics();
 		for (int i = 0; i < field.size(); i++) {
-			((Square) field.get(i)).draw(gr);
+			((Square) field.get(i)).draw();
 		}
-		gr.dispose();
 
 		attachChanges();
 	}
@@ -81,15 +78,16 @@ public class Frame extends JFrame {
 	private void drawGrid(Graphics gr) {
 		field = new ArrayList<Square>();
 		safeSquares = new ArrayList<Square>();
-		for (int y = 0; y < 15; y++) {
-			for (int x = 0; x < 25; x++) {
+		for (int y = 0; y < Frame.Y_SQUARES; y++) {
+			for (int x = 0; x < Frame.X_SQUARES; x++) {
 				Square sq = new Square(x, y, this);
+				
 				if (!sq.isMine()) {
 					safeSquares.add(sq);
 				}
+				
 				field.add(sq);
-
-				sq.draw(gr);
+				sq.draw();
 			}
 		}
 		countNearbyMines();
@@ -104,12 +102,12 @@ public class Frame extends JFrame {
 		int textSize = 27;
 
 		gr.setColor(Color.GREEN);
-		gr.setFont(new Font("Courier New", 1, textSize));
+		gr.setFont(new Font(FONT_FAMILY, Font.BOLD, textSize));
 
 		FontMetrics fm = gr.getFontMetrics();
 		int txtWidth = fm.stringWidth(text);
 
-		gr.drawString(text, (1172 - txtWidth) / 2, 695 + 3 * textSize / 2);
+		gr.drawString(text, (Frame.WIDTH - txtWidth) / 2, Frame.HEIGHT - 3 * textSize / 2);
 		gr.dispose();
 
 		attachChanges();
@@ -124,12 +122,12 @@ public class Frame extends JFrame {
 		int textSize = 27;
 
 		gr.setColor(Color.RED);
-		gr.setFont(new Font("Courier New", 1, textSize));
+		gr.setFont(new Font(FONT_FAMILY, Font.BOLD, textSize));
 
 		FontMetrics fm = gr.getFontMetrics();
 		int txtWidth = fm.stringWidth(text);
 
-		gr.drawString(text, (1172 - txtWidth) / 2, 695 + 3 * textSize / 2);
+		gr.drawString(text, (Frame.WIDTH - txtWidth) / 2, Frame.HEIGHT - 3 * textSize / 2);
 		gr.dispose();
 
 		attachChanges();
@@ -186,11 +184,7 @@ public class Frame extends JFrame {
 	}
 
 	private BufferedImage setupImage() {
-		return new BufferedImage(1172, 792, 1);
-	}
-
-	private Mouse setupMouse() {
-		return new Mouse(this.main);
+		return new BufferedImage(Frame.WIDTH, Frame.HEIGHT, 1);
 	}
 
 	public BufferedImage getImage() {
@@ -218,4 +212,5 @@ public class Frame extends JFrame {
 		}
 		return mines;
 	}
+	
 }

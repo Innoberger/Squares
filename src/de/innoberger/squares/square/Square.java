@@ -2,25 +2,29 @@ package de.innoberger.squares.square;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+
 import de.innoberger.squares.Frame;
 
-public class Square {
+public class Square implements MouseListener {
+	
 	public static final int SIZE = 40;
-	public static final int OFFSET_BETWEEN = 3;
 	public static final int MINE_PERCENTAGE = 12;
+	
 	private int posX;
 	private int posY;
-	private int centerX;
-	private int centerY;
 	private int nearbyMines;
+	
 	private SquareType type;
 	private SquareState state;
 	private Frame frame;
+	private JButton button;
 
 	public Square(int posX, int posY, Frame frame) {
 		Random random = new Random();
@@ -32,61 +36,63 @@ public class Square {
 
 		this.nearbyMines = 0;
 
-		this.centerX = (50 + this.posX * 43 + 20);
-		this.centerY = (50 + this.posY * 43 + 20);
-
 		SquareType st = SquareType.DEFAULT;
-		if (random.nextInt(101) <= 12) {
+		
+		if (random.nextInt(101) <= MINE_PERCENTAGE) {
 			st = SquareType.MINE;
 		}
+		
 		this.type = st;
 		this.state = SquareState.HIDDEN;
+		
+		this.button = new JButton();
+//		this.button.setLayout(null);
+		this.button.setModel(new SquareModel());
+		this.button.setBounds(Frame.OFFSET_BETWEEN + this.posX * (Square.SIZE + Frame.OFFSET_BETWEEN), Frame.OFFSET_BETWEEN + this.posY * (Square.SIZE + Frame.OFFSET_BETWEEN), Square.SIZE, Square.SIZE);
+		this.button.addMouseListener(this);
+		this.button.setBorder(null);
+//		this.button.setEnabled(false);
+		this.button.setFocusable(false);
+		this.button.setMargin(null);
+		this.button.setForeground(Color.BLACK); // font color
+		this.button.setFont(new Font(Frame.FONT_FAMILY, Font.BOLD, 20));
+		this.frame.add(this.button);
 	}
 
-	public void draw(Graphics gr) {
-		boolean drawNearbyMines = false;
-		if (!isRevealed()) {
-			gr.setColor(Color.CYAN);
-			if (isMarked()) {
-				gr.setColor(Color.ORANGE);
-			}
-		} else if (isMine()) {
-			gr.setColor(Color.RED);
+	public void draw() {
+		if (!this.isRevealed()) {
+			this.button.setBackground(Color.CYAN);
+		} else if (this.isMine()) {
+			this.button.setBackground(Color.RED);
 		} else {
-			gr.setColor(Color.WHITE);
-			drawNearbyMines = true;
-		}
-		gr.fillRoundRect(this.centerX - 20, this.centerY - 20, 40, 40, 13, 13);
-		if ((drawNearbyMines) && (this.nearbyMines > 0)) {
-			drawNearbyMines(gr);
+			this.button.setBackground(Color.WHITE);
+			this.drawNearbyMines();
 		}
 	}
 
-	private void drawNearbyMines(Graphics gr) {
-		int textSize = 26;
+	private void drawNearbyMines() {
 		if (this.nearbyMines == 1) {
-			gr.setColor(Color.BLUE);
+			this.button.setForeground(Color.BLUE);
 		} else if (this.nearbyMines == 2) {
-			gr.setColor(Color.GREEN);
+			this.button.setForeground(Color.GREEN);
 		} else if (this.nearbyMines == 3) {
-			gr.setColor(Color.ORANGE);
+			this.button.setForeground(Color.ORANGE);
 		} else {
-			gr.setColor(Color.RED);
+			this.button.setForeground(Color.RED);
 		}
-		gr.setFont(new Font("Courier New", 1, textSize));
-
-		FontMetrics fm = gr.getFontMetrics();
-		int txtWidth = fm.stringWidth(String.valueOf(this.nearbyMines));
-
-		gr.drawString(String.valueOf(this.nearbyMines), this.centerX - txtWidth / 2, this.centerY + textSize / 3);
+		
+		if (this.nearbyMines > 0) {
+			this.button.setText(this.nearbyMines + "");
+		}
 	}
 
 	public void reveal(boolean multiple) {
 		if ((!isRevealed()) && (!isMarked())) {
 			this.state = SquareState.REVEALED;
+			this.draw();
 
 			Frame.revealed += 1;
-			if ((Frame.revealed == 375 - Frame.getMineAmount()) && (!this.frame.freeze)) {
+			if ((Frame.revealed == Frame.X_SQUARES * Frame.Y_SQUARES - Frame.getMineAmount()) && (!this.frame.freeze)) {
 				this.frame.freeze = true;
 				this.frame.revealAll(true);
 			} else if ((isMine()) && (!this.frame.freeze)) {
@@ -116,10 +122,12 @@ public class Square {
 		if (!isRevealed()) {
 			if (isMarked()) {
 				this.state = SquareState.HIDDEN;
+				this.button.setBackground(Color.CYAN);
 
 				System.out.println("Unmarked square at x: " + this.posX + " y: " + this.posY);
 			} else {
 				this.state = SquareState.MARKED;
+				this.button.setBackground(Color.ORANGE);
 
 				System.out.println("Marked square at x: " + this.posX + " y: " + this.posY);
 			}
@@ -142,14 +150,6 @@ public class Square {
 
 	public int getPosY() {
 		return this.posY;
-	}
-
-	public int getCenterX() {
-		return this.centerX;
-	}
-
-	public int getCenterY() {
-		return this.centerY;
 	}
 
 	public SquareType getType() {
@@ -224,5 +224,44 @@ public class Square {
 			}
 		}
 		return squares;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (this.frame.freeze) {
+			return;
+		}
+		
+		if (SwingUtilities.isRightMouseButton(e)) {
+			this.toggleMark();
+			return;
+		}
+		
+		if (this.isMine()) {
+			System.out.println("You stabbed on a mine!");
+			this.reveal(false);
+		} else {
+			this.reveal(true);
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
 	}
 }
