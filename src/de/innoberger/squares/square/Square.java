@@ -237,6 +237,10 @@ public class Square implements MouseListener {
 			return;
 		}
 		
+		if (this.isMarked()) {
+			return;
+		}
+		
 		if (this.isMine()) {
 			System.out.println("You stabbed on a mine!");
 			this.reveal(false);
