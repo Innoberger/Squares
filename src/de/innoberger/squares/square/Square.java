@@ -17,6 +17,7 @@ public class Square {
 
 	public static final int SIZE = 40;
 	public static final int MINE_PERCENTAGE = 10;
+	public static final int REVEAL_ANIM_DELAY = 25;
 
 	private int posX;
 	private int posY;
@@ -121,7 +122,7 @@ public class Square {
 								public void run() {
 									sq.reveal(true);
 								}
-							}, 20, TimeUnit.MILLISECONDS);
+							}, REVEAL_ANIM_DELAY, TimeUnit.MILLISECONDS);
 						} else {
 							final ScheduledExecutorService executorService = Executors
 									.newSingleThreadScheduledExecutor();
@@ -130,7 +131,7 @@ public class Square {
 								public void run() {
 									sq.reveal(false);
 								}
-							}, 10, TimeUnit.MILLISECONDS);
+							}, REVEAL_ANIM_DELAY, TimeUnit.MILLISECONDS);
 						}
 					}
 				}
