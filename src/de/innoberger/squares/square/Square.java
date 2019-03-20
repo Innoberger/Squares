@@ -2,17 +2,15 @@ package de.innoberger.squares.square;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 import de.innoberger.squares.Frame;
+import de.innoberger.squares.input.SquareListener;
 
-public class Square implements MouseListener {
+public class Square {
 	
 	public static final int SIZE = 40;
 	public static final int MINE_PERCENTAGE = 12;
@@ -49,7 +47,7 @@ public class Square implements MouseListener {
 //		this.button.setLayout(null);
 		this.button.setModel(new SquareModel());
 		this.button.setBounds(Frame.OFFSET_BETWEEN + this.posX * (Square.SIZE + Frame.OFFSET_BETWEEN), Frame.OFFSET_BETWEEN + this.posY * (Square.SIZE + Frame.OFFSET_BETWEEN), Square.SIZE, Square.SIZE);
-		this.button.addMouseListener(this);
+		this.button.addMouseListener(new SquareListener(this));
 		this.button.setBorder(null);
 //		this.button.setEnabled(false);
 		this.button.setFocusable(false);
@@ -91,8 +89,10 @@ public class Square implements MouseListener {
 		if ((!isRevealed()) && (!isMarked())) {			
 			this.state = SquareState.REVEALED;
 			this.draw();
+			this.forceUnmark();
 
 			Frame.revealed += 1;
+			
 			if ((Frame.revealed == Frame.X_SQUARES * Frame.Y_SQUARES - Frame.getMineAmount()) && (!this.frame.freeze)) {
 				this.frame.freeze = true;
 				this.frame.revealAll(true);
@@ -100,11 +100,14 @@ public class Square implements MouseListener {
 				this.frame.freeze = true;
 				this.frame.revealAll(false);
 			}
+			
 			if (!multiple) {
 				return;
 			}
+			
 			if ((this.nearbyMines == 0) && (!this.frame.freeze)) {
 				ArrayList<Square> surround = getSurroundingSquares();
+				
 				for (int i = 0; i < surround.size(); i++) {
 					Square sq = (Square) surround.get(i);
 					if (!sq.isMine()) {
@@ -138,6 +141,7 @@ public class Square implements MouseListener {
 	public void forceUnmark() {
 		if (isMarked()) {
 			this.state = SquareState.HIDDEN;
+			this.button.setIcon(null);
 		}
 	}
 
@@ -159,6 +163,10 @@ public class Square implements MouseListener {
 
 	public SquareState getState() {
 		return this.state;
+	}
+	
+	public Frame getFrame() {
+		return this.frame;
 	}
 
 	public boolean isMine() {
@@ -226,47 +234,5 @@ public class Square implements MouseListener {
 		}
 		return squares;
 	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		if (this.frame.freeze) {
-			return;
-		}
-		
-		if (SwingUtilities.isRightMouseButton(e)) {
-			this.toggleMark();
-			return;
-		}
-		
-		if (this.isMarked()) {
-			return;
-		}
-		
-		if (this.isMine()) {
-			System.out.println("You stabbed on a mine!");
-			this.reveal(false);
-		} else {
-			this.reveal(true);
-		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-	}
+	
 }

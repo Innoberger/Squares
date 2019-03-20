@@ -10,6 +10,10 @@ public class Main {
 	public Main() {
 		this.frame = new Frame(this);
 	}
+	
+	public void forceHardReset() {
+		this.frame = new Frame(this);
+	}
 
 	public Frame getFrame() {
 		return this.frame;

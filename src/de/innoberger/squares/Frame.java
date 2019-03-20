@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import de.innoberger.squares.input.GlobalListener;
 import de.innoberger.squares.square.Square;
 
 public class Frame extends JFrame {
@@ -34,6 +35,8 @@ public class Frame extends JFrame {
 
 	public static int revealed;
 	public boolean freeze;
+	
+	private Main main;
 
 	public static ImageIcon marker;
 	public static ImageIcon mine;
@@ -46,12 +49,14 @@ public class Frame extends JFrame {
 	public Frame(Main main) {
 		super(TITLE + " " + VERSION);
 
+		this.main = main;
 		this.freeze = false;
 		revealed = 0;
 
 		setPreferredSize(new Dimension(Frame.WIDTH, Frame.HEIGHT));
-		setDefaultCloseOperation(3);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
+		addMouseListener(new GlobalListener(this));
 
 		try {
 			this.readRessources();
@@ -59,8 +64,11 @@ public class Frame extends JFrame {
 			e.printStackTrace();
 		}
 
-		this.image = setupImage();
-		draw();
+		this.image = this.setupImage();
+		this.draw();
+
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
 	public void draw() {
@@ -72,22 +80,20 @@ public class Frame extends JFrame {
 		this.freeze = false;
 		revealed = 0;
 
-		drawGrid(gr);
+		this.drawGrid();
 
 		gr.dispose();
 
-		attachChanges();
+		this.attachChanges();
 	}
 
 	public void refreshGrid() {
-		for (int i = 0; i < field.size(); i++) {
-			((Square) field.get(i)).draw();
-		}
-
-		attachChanges();
+		getContentPane().removeAll();
+		
+		this.draw();
 	}
 
-	private void drawGrid(Graphics gr) {
+	private void drawGrid() {
 		field = new ArrayList<Square>();
 		safeSquares = new ArrayList<Square>();
 		for (int y = 0; y < Frame.Y_SQUARES; y++) {
@@ -102,7 +108,7 @@ public class Frame extends JFrame {
 				sq.draw();
 			}
 		}
-		countNearbyMines();
+		this.countNearbyMines();
 	}
 
 	public void drawVictory() {
@@ -122,7 +128,7 @@ public class Frame extends JFrame {
 		gr.drawString(text, (Frame.WIDTH - txtWidth) / 2, Frame.HEIGHT - 3 * textSize / 2);
 		gr.dispose();
 
-		attachChanges();
+		this.attachChanges();
 	}
 
 	public void drawGameOver() {
@@ -142,15 +148,15 @@ public class Frame extends JFrame {
 		gr.drawString(text, (Frame.WIDTH - txtWidth) / 2, Frame.HEIGHT - 3 * textSize / 2);
 		gr.dispose();
 
-		attachChanges();
+		this.attachChanges();
 	}
 
 	public void revealAll(boolean victory) {
-		revealSelection(field, true);
+		this.revealSelection(field, true);
 		if (victory) {
-			drawVictory();
+			this.drawVictory();
 		} else {
-			drawGameOver();
+			this.drawGameOver();
 		}
 	}
 
@@ -167,14 +173,12 @@ public class Frame extends JFrame {
 	}
 
 	public void revealSafe() {
-		revealSelection(safeSquares, true);
+		this.revealSelection(safeSquares, true);
 	}
 
 	public void attachChanges() {
 		getContentPane().add(new JLabel(new ImageIcon(this.image)));
 		pack();
-		setLocationRelativeTo(null);
-		setVisible(true);
 	}
 
 	private void countNearbyMines() {
@@ -201,6 +205,10 @@ public class Frame extends JFrame {
 
 	public BufferedImage getImage() {
 		return this.image;
+	}
+	
+	public Main gerMain() {
+		return this.main;
 	}
 
 	public Square getSquareAt(int xPos, int yPos) {
