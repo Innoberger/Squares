@@ -50,6 +50,13 @@ public class Frame extends JFrame {
 	public Frame(Main main) {
 		super(TITLE + " " + VERSION);
 
+		try {
+			this.readRessources();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
 		this.main = main;
 		this.freeze = false;
 		revealed = 0;
@@ -57,18 +64,12 @@ public class Frame extends JFrame {
 		System.out.println("Window size: " + WIDTH + " x " + HEIGHT);
 
 		setLayout(null);
+		setIconImage(marker.getImage());
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setBackground(Color.BLACK);
 		addMouseListener(new GlobalListener(this));
-
-		try {
-			this.readRessources();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		this.draw();
 
 		setLocationRelativeTo(null);
