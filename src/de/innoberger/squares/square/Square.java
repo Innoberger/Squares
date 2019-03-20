@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 
@@ -111,9 +114,23 @@ public class Square {
 					Square sq = (Square) surround.get(i);
 					if (!sq.isMine()) {
 						if (sq.getNearbyMines() == 0) {
-							sq.reveal(true);
+							final ScheduledExecutorService executorService = Executors
+									.newSingleThreadScheduledExecutor();
+							executorService.schedule(new Runnable() {
+								@Override
+								public void run() {
+									sq.reveal(true);
+								}
+							}, 20, TimeUnit.MILLISECONDS);
 						} else {
-							sq.reveal(false);
+							final ScheduledExecutorService executorService = Executors
+									.newSingleThreadScheduledExecutor();
+							executorService.schedule(new Runnable() {
+								@Override
+								public void run() {
+									sq.reveal(false);
+								}
+							}, 10, TimeUnit.MILLISECONDS);
 						}
 					}
 				}

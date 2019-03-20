@@ -1,21 +1,21 @@
 package de.innoberger.squares;
 
 public class Main {
-	private Frame frame;
+	private static Frame frame;
 
 	public static void main(String[] args) {
 		new Main();
 	}
 
 	public Main() {
-		this.frame = new Frame(this);
+		frame = new Frame(this);
 	}
 
 	public void forceHardReset() {
-		this.frame = new Frame(this);
+		frame = new Frame(this);
 	}
 
-	public Frame getFrame() {
-		return this.frame;
+	public static Frame getFrame() {
+		return frame;
 	}
 }

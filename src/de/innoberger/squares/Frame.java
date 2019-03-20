@@ -19,7 +19,7 @@ public class Frame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public static final String TITLE = "Squares";
-	public static final String VERSION = "2.0";
+	public static final String VERSION = "2.1-SNAPSHOT";
 
 	public static final int OFFSET_BETWEEN = 4;
 	public static final int BOTTOM_OFFSET = 50;
@@ -152,6 +152,7 @@ public class Frame extends JFrame {
 				if (forceUnmark) {
 					sq.forceUnmark();
 				}
+				
 				sq.reveal(false);
 			}
 		}

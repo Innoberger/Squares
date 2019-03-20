@@ -32,7 +32,7 @@ public class SquareListener implements MouseListener {
 		}
 
 		if (this.square.isMine()) {
-			System.out.println("You stabbed on a mine!");
+			System.out.println("You stepped on a mine!");
 			this.square.reveal(false);
 		} else {
 			this.square.reveal(true);
