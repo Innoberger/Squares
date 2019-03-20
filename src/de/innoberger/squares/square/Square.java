@@ -17,11 +17,13 @@ public class Square {
 
 	public static final int SIZE = 40;
 	public static final int MINE_PERCENTAGE = 10;
-	public static final int REVEAL_ANIM_DELAY = 25;
+	public static final int REVEAL_ANIM_DELAY = 30;
 
 	private int posX;
 	private int posY;
 	private int nearbyMines;
+	
+	private boolean wasForceRevealed;
 
 	private SquareType type;
 	private SquareState state;
@@ -37,6 +39,8 @@ public class Square {
 		this.posY = posY;
 
 		this.nearbyMines = 0;
+		
+		this.wasForceRevealed = false;
 
 		SquareType st = SquareType.DEFAULT;
 
@@ -88,7 +92,7 @@ public class Square {
 		}
 	}
 
-	public void reveal(boolean multiple) {
+	public void reveal(boolean surrounding) {		
 		if ((!this.isRevealed()) && (!this.isMarked())) {
 			this.state = SquareState.REVEALED;
 			this.draw();
@@ -98,18 +102,18 @@ public class Square {
 
 			if ((Frame.revealed == Frame.X_SQUARES * Frame.Y_SQUARES - Frame.getMineAmount()) && (!this.frame.freeze)) {
 				this.frame.freeze = true;
-				this.frame.revealAll(true);
+				this.frame.forceRevealAll(true, this);
 			} else if ((this.isMine()) && (!this.frame.freeze)) {
 				this.frame.freeze = true;
-				this.frame.revealAll(false);
+				this.frame.forceRevealAll(false, this);
 			}
 
-			if (!multiple) {
+			if (!surrounding) {
 				return;
 			}
 
 			if ((this.nearbyMines == 0) && (!this.frame.freeze)) {
-				ArrayList<Square> surround = getSurroundingSquares();
+				ArrayList<Square> surround = this.getSurroundingSquares();
 
 				for (int i = 0; i < surround.size(); i++) {
 					Square sq = (Square) surround.get(i);
@@ -136,6 +140,33 @@ public class Square {
 					}
 				}
 			}
+		}
+	}
+
+	public void forceReveal() {
+		ArrayList<Square> surround = this.getSurroundingSquares();
+		
+		if (this.wasForceRevealed) {
+			return;
+		}
+		
+		this.state = SquareState.REVEALED;
+		this.draw();
+		this.forceUnmark();
+		
+		this.wasForceRevealed = true;
+
+		Frame.revealed += 1;
+
+		for (int i = 0; i < surround.size(); i++) {
+			Square sq = (Square) surround.get(i);
+			final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+			executorService.schedule(new Runnable() {
+				@Override
+				public void run() {
+					sq.forceReveal();
+				}
+			}, REVEAL_ANIM_DELAY, TimeUnit.MILLISECONDS);
 		}
 	}
 

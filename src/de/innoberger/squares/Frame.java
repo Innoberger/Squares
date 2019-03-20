@@ -135,31 +135,15 @@ public class Frame extends JFrame {
 		this.bottomPanel.add(label);
 	}
 
-	public void revealAll(boolean victory) {
-		this.revealSelection(field, true);
+	public void forceRevealAll(boolean victory, Square startSquare) {
+		this.freeze = true;
+		startSquare.forceReveal();
 
 		if (victory) {
 			this.drawVictory();
 		} else {
 			this.drawGameOver();
 		}
-	}
-
-	public void revealSelection(ArrayList<Square> sel, boolean forceUnmark) {
-		for (int i = 0; i < sel.size(); i++) {
-			Square sq = (Square) sel.get(i);
-			if (!sq.isRevealed()) {
-				if (forceUnmark) {
-					sq.forceUnmark();
-				}
-				
-				sq.reveal(false);
-			}
-		}
-	}
-
-	public void revealSafe() {
-		this.revealSelection(safeSquares, true);
 	}
 
 	private void countNearbyMines() {
