@@ -21,10 +21,10 @@ public class Frame extends JFrame {
 	public static final String TITLE = "Squares";
 	public static final String VERSION = "2.1-SNAPSHOT";
 
-	public static final int OFFSET_BETWEEN = 4;
-	public static final int BOTTOM_OFFSET = 50;
-	public static final int X_SQUARES = 25;
-	public static final int Y_SQUARES = 15;
+	public static final int OFFSET_BETWEEN = 3;
+	public static final int X_SQUARES = 35;
+	public static final int Y_SQUARES = 20;
+	public static final int MINE_PERCENTAGE = 10;
 
 	public static final String FONT_FAMILY = "Courier New";
 
@@ -42,8 +42,9 @@ public class Frame extends JFrame {
 	private JPanel fieldPanel;
 	private JPanel bottomPanel;
 
-	public static final int WIDTH = (int) (OFFSET_BETWEEN * 2.5) + (Square.SIZE + OFFSET_BETWEEN) * X_SQUARES;
-	public static final int HEIGHT = BOTTOM_OFFSET * 2 + OFFSET_BETWEEN * 2
+	public static final int BOTTOM_FONT_SIZE = (OFFSET_BETWEEN * 2 + (Square.SIZE + OFFSET_BETWEEN) * Y_SQUARES) / 22;
+	public static final int WIDTH = (int) (OFFSET_BETWEEN * 3) + (Square.SIZE + OFFSET_BETWEEN) * X_SQUARES;
+	public static final int HEIGHT = (int) (BOTTOM_FONT_SIZE * 3) + OFFSET_BETWEEN * 2
 			+ (Square.SIZE + OFFSET_BETWEEN) * Y_SQUARES;
 
 	public Frame(Main main) {
@@ -161,25 +162,27 @@ public class Frame extends JFrame {
 				sq.setNearbyMines(mines);
 			}
 		}
-		System.out.println("Amount of mines: " + getMineAmount());
+
+		System.out.println(
+				"Amount of mines: " + getMineAmount() + " (" + 100 * getMineAmount() / (double) field.size() + "%)");
 	}
 
 	private void setupPanels() {
 		this.fieldPanel = new JPanel();
 		this.fieldPanel.removeAll();
 		this.fieldPanel.setBackground(getBackground());
-		this.fieldPanel.setBounds(0, 0, WIDTH, (int) (HEIGHT - BOTTOM_OFFSET * 1.8));
+		this.fieldPanel.setBounds(0, 0, WIDTH, (int) (HEIGHT - BOTTOM_FONT_SIZE * 2.75));
 		this.fieldPanel.setBorder(null);
-		this.fieldPanel.setFont(new Font(FONT_FAMILY, Font.BOLD, 30));
+		this.fieldPanel.setFont(new Font(FONT_FAMILY, Font.BOLD, (int) (BOTTOM_FONT_SIZE * 0.9)));
 
 		this.add(this.fieldPanel);
 
 		this.bottomPanel = new JPanel();
 		this.bottomPanel.removeAll();
 		this.bottomPanel.setBackground(getBackground());
-		this.bottomPanel.setBounds(0, (int) (HEIGHT - BOTTOM_OFFSET * 1.8), WIDTH, (int) (BOTTOM_OFFSET * 1.8));
+		this.bottomPanel.setBounds(0, (int) (HEIGHT - BOTTOM_FONT_SIZE * 2.75), WIDTH, (int) (BOTTOM_FONT_SIZE * 2.75));
 		this.bottomPanel.setBorder(null);
-		this.bottomPanel.setFont(new Font(FONT_FAMILY, Font.BOLD, 30));
+		this.bottomPanel.setFont(new Font(FONT_FAMILY, Font.BOLD, (int) (BOTTOM_FONT_SIZE * 0.9)));
 
 		this.add(this.bottomPanel);
 	}

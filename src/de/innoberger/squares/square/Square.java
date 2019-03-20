@@ -15,9 +15,8 @@ import de.innoberger.squares.input.SquareListener;
 
 public class Square {
 
-	public static final int SIZE = 40;
-	public static final int MINE_PERCENTAGE = 10;
-	public static final int REVEAL_ANIM_DELAY = 30;
+	public static final int SIZE = 30;
+	public static final int REVEAL_ANIM_DELAY = 40;
 
 	private int posX;
 	private int posY;
@@ -44,7 +43,7 @@ public class Square {
 
 		SquareType st = SquareType.DEFAULT;
 
-		if (random.nextInt(101) <= MINE_PERCENTAGE) {
+		if (random.nextInt(101) <= Frame.MINE_PERCENTAGE) {
 			st = SquareType.MINE;
 		}
 
@@ -59,8 +58,9 @@ public class Square {
 		this.button.setBorder(null);
 		this.button.setFocusable(false);
 		this.button.setMargin(null);
+		this.button.setMultiClickThreshhold(REVEAL_ANIM_DELAY);
 		this.button.setForeground(Color.BLACK); // font color
-		this.button.setFont(new Font(Frame.FONT_FAMILY, Font.BOLD, 20));
+		this.button.setFont(new Font(Frame.FONT_FAMILY, Font.BOLD, (int) (SIZE / 1.5)));
 		this.frame.add(this.button);
 	}
 
@@ -145,6 +145,7 @@ public class Square {
 
 	public void forceReveal() {
 		ArrayList<Square> surround = this.getSurroundingSquares();
+		this.forceUnmark();
 		
 		if (this.wasForceRevealed) {
 			return;
@@ -152,7 +153,6 @@ public class Square {
 		
 		this.state = SquareState.REVEALED;
 		this.draw();
-		this.forceUnmark();
 		
 		this.wasForceRevealed = true;
 
