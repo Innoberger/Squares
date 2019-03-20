@@ -5,7 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -16,26 +18,30 @@ import de.innoberger.squares.square.Square;
 
 public class Frame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final String TITLE = "Squares";
 	public static final String VERSION = "2.0-SNAPSHOT";
-	
+
 	public static final int OFFSET_BETWEEN = 4;
 	public static final int BOTTOM_OFFSET = 50;
 	public static final int X_SQUARES = 25;
 	public static final int Y_SQUARES = 15;
-	
+
 	public static final String FONT_FAMILY = "Courier New";
-	
+
 	public static ArrayList<Square> field;
 	public static ArrayList<Square> safeSquares;
-	
+
 	public static int revealed;
 	public boolean freeze;
-	
+
+	public static ImageIcon marker;
+	public static ImageIcon mine;
+
 	private BufferedImage image;
 	public static final int WIDTH = (int) (OFFSET_BETWEEN * 2.5) + (Square.SIZE + OFFSET_BETWEEN) * X_SQUARES;
-	public static final int HEIGHT = BOTTOM_OFFSET * 2 + OFFSET_BETWEEN * 2 + (Square.SIZE + OFFSET_BETWEEN) * Y_SQUARES;
+	public static final int HEIGHT = BOTTOM_OFFSET * 2 + OFFSET_BETWEEN * 2
+			+ (Square.SIZE + OFFSET_BETWEEN) * Y_SQUARES;
 
 	public Frame(Main main) {
 		super(TITLE + " " + VERSION);
@@ -46,6 +52,12 @@ public class Frame extends JFrame {
 		setPreferredSize(new Dimension(Frame.WIDTH, Frame.HEIGHT));
 		setDefaultCloseOperation(3);
 		setResizable(false);
+
+		try {
+			this.readRessources();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		this.image = setupImage();
 		draw();
@@ -81,11 +93,11 @@ public class Frame extends JFrame {
 		for (int y = 0; y < Frame.Y_SQUARES; y++) {
 			for (int x = 0; x < Frame.X_SQUARES; x++) {
 				Square sq = new Square(x, y, this);
-				
+
 				if (!sq.isMine()) {
 					safeSquares.add(sq);
 				}
-				
+
 				field.add(sq);
 				sq.draw();
 			}
@@ -212,5 +224,18 @@ public class Frame extends JFrame {
 		}
 		return mines;
 	}
-	
+
+	private void readRessources() throws IOException {
+		Frame.marker = new ImageIcon(Main.class.getResource("/res/marker.png"));
+		Frame.mine = new ImageIcon(Main.class.getResource("/res/mine.png"));
+
+		Image img1 = Frame.marker.getImage();
+		Image newImg1 = img1.getScaledInstance(Square.SIZE, Square.SIZE, java.awt.Image.SCALE_DEFAULT);
+		Frame.marker = new ImageIcon(newImg1);
+		
+		Image img2 = Frame.mine.getImage();
+		Image newImg2 = img2.getScaledInstance(Square.SIZE, Square.SIZE, java.awt.Image.SCALE_DEFAULT);
+		Frame.mine = new ImageIcon(newImg2);
+	}
+
 }

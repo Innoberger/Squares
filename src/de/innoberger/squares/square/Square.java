@@ -64,6 +64,7 @@ public class Square implements MouseListener {
 			this.button.setBackground(Color.CYAN);
 		} else if (this.isMine()) {
 			this.button.setBackground(Color.RED);
+			this.button.setIcon(Frame.mine);
 		} else {
 			this.button.setBackground(Color.WHITE);
 			this.drawNearbyMines();
@@ -86,8 +87,8 @@ public class Square implements MouseListener {
 		}
 	}
 
-	public void reveal(boolean multiple) {
-		if ((!isRevealed()) && (!isMarked())) {
+	public void reveal(boolean multiple) {		
+		if ((!isRevealed()) && (!isMarked())) {			
 			this.state = SquareState.REVEALED;
 			this.draw();
 
@@ -122,12 +123,12 @@ public class Square implements MouseListener {
 		if (!isRevealed()) {
 			if (isMarked()) {
 				this.state = SquareState.HIDDEN;
-				this.button.setBackground(Color.CYAN);
+				this.button.setIcon(null);
 
 				System.out.println("Unmarked square at x: " + this.posX + " y: " + this.posY);
 			} else {
 				this.state = SquareState.MARKED;
-				this.button.setBackground(Color.ORANGE);
+				this.button.setIcon(Frame.marker);
 
 				System.out.println("Marked square at x: " + this.posX + " y: " + this.posY);
 			}
