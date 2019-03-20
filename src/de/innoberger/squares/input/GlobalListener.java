@@ -6,9 +6,9 @@ import java.awt.event.MouseListener;
 import de.innoberger.squares.Frame;
 
 public class GlobalListener implements MouseListener {
-	
+
 	private Frame frame;
-	
+
 	public GlobalListener(Frame frame) {
 		this.frame = frame;
 	}

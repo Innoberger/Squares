@@ -11,14 +11,14 @@ import de.innoberger.squares.Frame;
 import de.innoberger.squares.input.SquareListener;
 
 public class Square {
-	
+
 	public static final int SIZE = 40;
-	public static final int MINE_PERCENTAGE = 12;
-	
+	public static final int MINE_PERCENTAGE = 10;
+
 	private int posX;
 	private int posY;
 	private int nearbyMines;
-	
+
 	private SquareType type;
 	private SquareState state;
 	private Frame frame;
@@ -35,21 +35,20 @@ public class Square {
 		this.nearbyMines = 0;
 
 		SquareType st = SquareType.DEFAULT;
-		
+
 		if (random.nextInt(101) <= MINE_PERCENTAGE) {
 			st = SquareType.MINE;
 		}
-		
+
 		this.type = st;
 		this.state = SquareState.HIDDEN;
-		
+
 		this.button = new JButton();
-//		this.button.setLayout(null);
 		this.button.setModel(new SquareModel());
-		this.button.setBounds(Frame.OFFSET_BETWEEN + this.posX * (Square.SIZE + Frame.OFFSET_BETWEEN), Frame.OFFSET_BETWEEN + this.posY * (Square.SIZE + Frame.OFFSET_BETWEEN), Square.SIZE, Square.SIZE);
+		this.button.setBounds(Frame.OFFSET_BETWEEN + this.posX * (Square.SIZE + Frame.OFFSET_BETWEEN),
+				Frame.OFFSET_BETWEEN + this.posY * (Square.SIZE + Frame.OFFSET_BETWEEN), Square.SIZE, Square.SIZE);
 		this.button.addMouseListener(new SquareListener(this));
 		this.button.setBorder(null);
-//		this.button.setEnabled(false);
 		this.button.setFocusable(false);
 		this.button.setMargin(null);
 		this.button.setForeground(Color.BLACK); // font color
@@ -79,35 +78,35 @@ public class Square {
 		} else {
 			this.button.setForeground(Color.RED);
 		}
-		
+
 		if (this.nearbyMines > 0) {
 			this.button.setText(this.nearbyMines + "");
 		}
 	}
 
-	public void reveal(boolean multiple) {		
-		if ((!isRevealed()) && (!isMarked())) {			
+	public void reveal(boolean multiple) {
+		if ((!this.isRevealed()) && (!this.isMarked())) {
 			this.state = SquareState.REVEALED;
 			this.draw();
 			this.forceUnmark();
 
 			Frame.revealed += 1;
-			
+
 			if ((Frame.revealed == Frame.X_SQUARES * Frame.Y_SQUARES - Frame.getMineAmount()) && (!this.frame.freeze)) {
 				this.frame.freeze = true;
 				this.frame.revealAll(true);
-			} else if ((isMine()) && (!this.frame.freeze)) {
+			} else if ((this.isMine()) && (!this.frame.freeze)) {
 				this.frame.freeze = true;
 				this.frame.revealAll(false);
 			}
-			
+
 			if (!multiple) {
 				return;
 			}
-			
+
 			if ((this.nearbyMines == 0) && (!this.frame.freeze)) {
 				ArrayList<Square> surround = getSurroundingSquares();
-				
+
 				for (int i = 0; i < surround.size(); i++) {
 					Square sq = (Square) surround.get(i);
 					if (!sq.isMine()) {
@@ -139,7 +138,7 @@ public class Square {
 	}
 
 	public void forceUnmark() {
-		if (isMarked()) {
+		if (this.isMarked()) {
 			this.state = SquareState.HIDDEN;
 			this.button.setIcon(null);
 		}
@@ -164,7 +163,7 @@ public class Square {
 	public SquareState getState() {
 		return this.state;
 	}
-	
+
 	public Frame getFrame() {
 		return this.frame;
 	}
@@ -234,5 +233,5 @@ public class Square {
 		}
 		return squares;
 	}
-	
+
 }

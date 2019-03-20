@@ -8,29 +8,29 @@ import javax.swing.SwingUtilities;
 import de.innoberger.squares.square.Square;
 
 public class SquareListener implements MouseListener {
-	
+
 	private Square square;
-	
+
 	public SquareListener(Square square) {
 		this.square = square;
 	}
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (this.square.getFrame().freeze) {
 			this.square.getFrame().refreshGrid();
 			return;
 		}
-		
+
 		if (SwingUtilities.isRightMouseButton(e)) {
 			this.square.toggleMark();
 			return;
 		}
-		
+
 		if (this.square.isMarked()) {
 			return;
 		}
-		
+
 		if (this.square.isMine()) {
 			System.out.println("You stabbed on a mine!");
 			this.square.reveal(false);
