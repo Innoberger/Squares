@@ -90,7 +90,8 @@ public class Frame extends JFrame {
 
 	public void refreshGrid() {
 		getContentPane().removeAll();
-
+		
+		System.gc();
 		this.draw();
 	}
 

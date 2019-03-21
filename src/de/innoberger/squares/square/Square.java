@@ -3,14 +3,12 @@ package de.innoberger.squares.square;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 
 import de.innoberger.squares.Frame;
+import de.innoberger.squares.Main;
 import de.innoberger.squares.input.SquareListener;
 
 public class Square {
@@ -30,8 +28,6 @@ public class Square {
 	private JButton button;
 
 	public Square(int posX, int posY, Frame frame) {
-		Random random = new Random();
-
 		this.frame = frame;
 
 		this.posX = posX;
@@ -43,7 +39,7 @@ public class Square {
 
 		SquareType st = SquareType.DEFAULT;
 
-		if (random.nextInt(101) <= Frame.MINE_PERCENTAGE) {
+		if (Main.random.nextInt(101) <= Frame.MINE_PERCENTAGE) {
 			st = SquareType.MINE;
 		}
 
@@ -119,18 +115,14 @@ public class Square {
 					Square sq = (Square) surround.get(i);
 					if (!sq.isMine()) {
 						if (sq.getNearbyMines() == 0) {
-							final ScheduledExecutorService executorService = Executors
-									.newSingleThreadScheduledExecutor();
-							executorService.schedule(new Runnable() {
+							Main.executorService.schedule(new Runnable() {
 								@Override
 								public void run() {
 									sq.reveal(true);
 								}
 							}, REVEAL_ANIM_DELAY, TimeUnit.MILLISECONDS);
 						} else {
-							final ScheduledExecutorService executorService = Executors
-									.newSingleThreadScheduledExecutor();
-							executorService.schedule(new Runnable() {
+							Main.executorService.schedule(new Runnable() {
 								@Override
 								public void run() {
 									sq.reveal(false);
@@ -143,7 +135,7 @@ public class Square {
 		}
 	}
 
-	public void forceReveal() {
+	public void forceReveal() {		
 		ArrayList<Square> surround = this.getSurroundingSquares();
 		this.forceUnmark();
 		
@@ -160,8 +152,8 @@ public class Square {
 
 		for (int i = 0; i < surround.size(); i++) {
 			Square sq = (Square) surround.get(i);
-			final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-			executorService.schedule(new Runnable() {
+			
+			Main.executorService.schedule(new Runnable() {
 				@Override
 				public void run() {
 					sq.forceReveal();
