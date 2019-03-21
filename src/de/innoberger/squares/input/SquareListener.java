@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.SwingUtilities;
 
+import de.innoberger.squares.Frame;
 import de.innoberger.squares.square.Square;
 
 public class SquareListener implements MouseListener {
@@ -17,6 +18,10 @@ public class SquareListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if (Frame.mouseDisabled) {
+			return;
+		}
+		
 		if (this.square.getFrame().freeze) {
 			this.square.getFrame().refreshGrid();
 			return;

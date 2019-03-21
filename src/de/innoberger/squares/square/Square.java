@@ -89,17 +89,17 @@ public class Square {
 	}
 
 	public void reveal(boolean surrounding) {		
-		if ((!this.isRevealed()) && (!this.isMarked())) {
+		if (!this.isRevealed() && !this.isMarked()) {
 			this.state = SquareState.REVEALED;
 			this.draw();
 			this.forceUnmark();
 
 			Frame.revealed += 1;
 
-			if ((Frame.revealed == Frame.X_SQUARES * Frame.Y_SQUARES - Frame.getMineAmount()) && (!this.frame.freeze)) {
+			if (!this.isMine() && (Frame.revealed == Frame.field.size() - Frame.getMineAmount()) && (!this.frame.freeze)) {
 				this.frame.freeze = true;
 				this.frame.forceRevealAll(true, this);
-			} else if ((this.isMine()) && (!this.frame.freeze)) {
+			} else if (this.isMine() && !this.frame.freeze) {
 				this.frame.freeze = true;
 				this.frame.forceRevealAll(false, this);
 			}
@@ -143,6 +143,8 @@ public class Square {
 			return;
 		}
 		
+		Frame.mouseDisabled = true;
+		
 		this.state = SquareState.REVEALED;
 		this.draw();
 		
@@ -156,7 +158,20 @@ public class Square {
 			Main.executorService.schedule(new Runnable() {
 				@Override
 				public void run() {
+					boolean done = true;
+					
 					sq.forceReveal();
+					
+					for (Square sq : Frame.field) {
+						if (!sq.wasForceRevealed) {
+							done = false;
+							break;
+						}
+					}
+					
+					if (done) {
+						Frame.mouseDisabled = false;
+					}
 				}
 			}, REVEAL_ANIM_DELAY, TimeUnit.MILLISECONDS);
 		}

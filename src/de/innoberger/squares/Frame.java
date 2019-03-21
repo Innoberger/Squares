@@ -32,6 +32,8 @@ public class Frame extends JFrame {
 	public static ArrayList<Square> safeSquares;
 
 	public static int revealed;
+	
+	public static boolean mouseDisabled;
 	public boolean freeze;
 
 	private Main main;
@@ -56,10 +58,7 @@ public class Frame extends JFrame {
 			e.printStackTrace();
 		}
 
-
 		this.main = main;
-		this.freeze = false;
-		revealed = 0;
 
 		System.out.println("Window size: " + WIDTH + " x " + HEIGHT);
 
@@ -79,6 +78,7 @@ public class Frame extends JFrame {
 	public void draw() {
 		this.freeze = false;
 		revealed = 0;
+		mouseDisabled = false;
 
 		this.drawGrid();
 		this.setupPanels();
@@ -91,7 +91,6 @@ public class Frame extends JFrame {
 	public void refreshGrid() {
 		getContentPane().removeAll();
 		
-		System.gc();
 		this.draw();
 	}
 

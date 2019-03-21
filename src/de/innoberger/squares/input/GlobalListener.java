@@ -15,10 +15,15 @@ public class GlobalListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (this.frame.freeze) {
-			this.frame.refreshGrid();
+		if (Frame.mouseDisabled) {
 			return;
 		}
+		
+		if (!this.frame.freeze) {
+			return;
+		}
+		
+		this.frame.refreshGrid();
 	}
 
 	@Override
