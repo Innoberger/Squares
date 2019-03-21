@@ -74,13 +74,15 @@ public class Square {
 
 	private void drawNearbyMines() {
 		if (this.nearbyMines == 1) {
-			this.button.setForeground(Color.BLUE);
+			this.button.setForeground(new Color(0x374ef7));
 		} else if (this.nearbyMines == 2) {
-			this.button.setForeground(Color.GREEN);
+			this.button.setForeground(new Color(0x0cce49));
 		} else if (this.nearbyMines == 3) {
 			this.button.setForeground(Color.ORANGE);
-		} else {
+		} else if (this.nearbyMines == 4) {
 			this.button.setForeground(Color.RED);
+		} else {
+			this.button.setForeground(new Color(0x9400D3));
 		}
 
 		if (this.nearbyMines > 0) {

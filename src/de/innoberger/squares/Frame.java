@@ -19,9 +19,9 @@ public class Frame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public static final String TITLE = "Squares";
-	public static final String VERSION = "2.1-SNAPSHOT";
+	public static final String VERSION = "2.1";
 
-	public static final int OFFSET_BETWEEN = 3;
+	public static final int OFFSET_BETWEEN = 2;
 	public static final int X_SQUARES = 35;
 	public static final int Y_SQUARES = 20;
 	public static final int MINE_PERCENTAGE = 10;
@@ -45,7 +45,7 @@ public class Frame extends JFrame {
 	private JPanel bottomPanel;
 
 	public static final int BOTTOM_FONT_SIZE = (OFFSET_BETWEEN * 2 + (Square.SIZE + OFFSET_BETWEEN) * Y_SQUARES) / 22;
-	public static final int WIDTH = (int) (OFFSET_BETWEEN * 3) + (Square.SIZE + OFFSET_BETWEEN) * X_SQUARES;
+	public static final int WIDTH = (int) (OFFSET_BETWEEN * 4) + (Square.SIZE + OFFSET_BETWEEN) * X_SQUARES;
 	public static final int HEIGHT = (int) (BOTTOM_FONT_SIZE * 3) + OFFSET_BETWEEN * 2
 			+ (Square.SIZE + OFFSET_BETWEEN) * Y_SQUARES;
 
