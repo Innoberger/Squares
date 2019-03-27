@@ -12,6 +12,7 @@ Please note that there is a known memory leak issue before version v2.1.
 
 ## Planned Features :arrow_right_hook:
 
+* Make the first click safe: Never step on a mine at the start of a game
 * Main menu with the option to configure square amount and mine percentage
 * Ingame stats showing mine amount, remaining squares and time since game start
 * Time-based highscore list; to be stored in a local file
