@@ -2,6 +2,8 @@
 
 An open source clone of good old Minesweeper.
 
+Please note that you will need Java/JRE 8 to compile the code and run the game.
+
 ## Versions :calendar:
 
 Please note that there is a known memory leak issue before version v2.1.
